@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isac Mods TV • Galaxy Store PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Orbitron}
+body{background:radial-gradient(circle at top,#0f172a,#020617 70%);color:white;overflow-x:hidden}
+header{background:rgba(2,6,23,.9);border-bottom:2px solid #38bdf8;padding:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+header h1{color:#38bdf8;text-shadow:0 0 12px #38bdf8}
+.search input{padding:10px 14px;border-radius:20px;border:none;background:#020617;color:white;width:240px;border:1px solid #38bdf8}
+button{background:linear-gradient(135deg,#38bdf8,#22c55e);border:none;padding:10px 14px;border-radius:14px;font-weight:700;cursor:pointer;color:black;box-shadow:0 0 15px rgba(56,189,248,.5)}
+.banner{background:linear-gradient(135deg,#0ea5e9,#22c55e);padding:35px 15px;text-align:center;font-size:28px;font-weight:800}
+.timer{font-size:14px;margin-top:6px}
+.music{text-align:center;padding:8px;border-bottom:2px solid #38bdf8}
+.music audio{width:100%;max-width:420px}
+.social{text-align:center;padding:10px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;border-bottom:2px solid #38bdf8}
+.social a{color:white;text-decoration:none;background:#020617;padding:8px 12px;border-radius:10px;border:1px solid #38bdf8;font-size:13px}
+.container{max-width:1300px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.card{background:rgba(2,6,23,.95);border:1px solid #38bdf8;border-radius:18px;padding:12px;text-align:center;transition:.35s}
+.card:hover{transform:translateY(-6px);box-shadow:0 0 30px rgba(56,189,248,.9)}
+.card img{width:100%;border-radius:14px}
+.stock{font-size:12px;color:#22c55e;margin:4px}
+.maint{font-size:12px;color:#f87171;margin:4px}
+.price del{color:#f87171;font-size:12px}
+.price span{color:#38bdf8;font-size:22px;font-weight:800}
+.cart,.admin{position:fixed;bottom:10px;background:rgba(2,6,23,.96);border:2px solid #38bdf8;border-radius:18px;padding:12px;width:320px;max-height:80vh;overflow:auto;backdrop-filter:blur(6px)}
+.cart{right:10px}
+.admin{right:340px;display:none}
+.cart h3,.admin h3{text-align:center;margin-bottom:8px;color:#38bdf8}
+.cart ul{list-style:none;font-size:13px}
+.cart li{display:flex;justify-content:space-between;margin-bottom:5px}
+.closeCart{position:absolute;top:6px;right:12px;cursor:pointer;color:#f87171;font-size:18px}
+.modal,#loginBox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:999}
+.modal .box,#loginBox div{background:#020617;border:2px solid #38bdf8;border-radius:18px;padding:20px;width:300px;text-align:center}
+footer{border-top:2px solid #38bdf8;padding:15px;text-align:center;margin-top:30px}
+footer a{color:#38bdf8;margin:0 10px;text-decoration:none;font-weight:700}
+.visitors{font-size:14px;color:#38bdf8;margin-top:10px;text-align:center}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌌 Isac Mods TV — Galaxy Store</h1>
+<div class="search"><input id="search" placeholder="Buscar produto..."></div>
+<button onclick="toggleCart()">🛒 Carrinho</button>
+<button onclick="openLogin()">🔐 Admin</button>
+</header>
+
+<div class="music">
+🎧 Rádio ao vivo — Baile da Selva<br>
+<audio controls autoplay>
+<source src="https://jpdofunk3.com.br/stream/baile-da-selva">
+</audio>
+</div>
+
+<div class="social">
+<a href="https://www.youtube.com/@isacmodstv" target="_blank">📺 YouTube</a>
+<a href="https://chat.whatsapp.com/Bye9CWnyog5CggS0y6RxXA?mode=gi_c" target="_blank">💬 WhatsApp</a>
+<a href="https://t.me/RATEXMODS" target="_blank">📲 Telegram</a>
+</div>
+
+<div class="banner">
+🚀 PROMOÇÃO GALÁCTICA
+<div class="timer">⏳ Termina em <span id="timer"></span></div>
+<div class="visitors">🌐 Visitantes online: <span id="visitors">0</span></div>
+</div>
+
+<div class="container">
+<div class="grid" id="products"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin" id="adminPanel">
+<h3>🛠 Painel Admin</h3>
+
+<input id="pName" placeholder="Nome"><br><br>
+<input type="file" id="pImgFile" accept="image/*"><br><br>
+<textarea id="pDesc" placeholder="Descrição / Detalhes do produto" rows="4" style="width:100%"></textarea><br><br>
+<input id="pOld" placeholder="Preço antigo"><br><br>
+<input id="pPrice" placeholder="Preço atual"><br><br>
+<input id="pStock" placeholder="Estoque"><br><br>
+<input id="pLink" placeholder="Link download/compra"><br><br>
+
+<select id="pType">
+<option value="buy">COMPRAR</option>
+<option value="download">DOWNLOAD</option>
+</select><br><br>
+
+<button onclick="addAdminProduct()">Adicionar Produto</button>
+
+<hr style="margin:10px 0">
+
+<h4>⚙ Controle Produtos</h4>
+<select id="prodSelect"></select><br><br>
+<button onclick="toggleMaint()">🔧 Manutenção</button>
+<button onclick="deleteProduct()" style="background:#f87171">🗑 Deletar</button>
+
+<br><br>
+<button onclick="logout()" style="background:#f87171">Sair</button>
+</div>
+
+<!-- CARRINHO -->
+<div class="cart" id="cartBox" style="display:none">
+<span class="closeCart" onclick="toggleCart()">✖</span>
+<h3>🛒 Carrinho</h3>
+<ul id="list"></ul>
+
+<b>Subtotal: R$ <span id="sub">0.00</span></b><br>
+<b>Desconto: <span id="disc">10%</span></b><br>
+<b>Total: R$ <span id="total">0.00</span></b><br><br>
+
+<input id="email" placeholder="Seu e-mail"><br><br>
+<input id="cupom" placeholder="Cupom: GALAXIA"><br><br>
+
+<button onclick="pix()">💳 PAGAR NO PIX</button>
+</div>
+
+<footer>
+<p>🌐 Redes Oficiais</p><br>
+<a href="https://youtube.com">📺 YouTube</a>
+<a href="https://wa.me/5599999999999">💬 WhatsApp</a>
+<a href="https://t.me/seucanal">📲 Telegram</a>
+<p style="margin-top:10px">© 2026 Isac Mods TV</p>
+</footer>
+
+<!-- MODAL DETALHES -->
+<div class="modal" id="modal">
+<div class="box">
+<img id="mImg" style="width:100%;border-radius:12px"><br><br>
+<h3 id="mName"></h3>
+<p id="mPrice"></p>
+<p id="mStock"></p>
+<p id="mMaint"></p>
+<p id="mDesc"></p><br>
+<button onclick="modal.style.display='none'">Fechar</button>
+</div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginBox">
+<div>
+<h3>🔐 Login Admin</h3><br>
+<input id="user" placeholder="Usuário"><br><br>
+<input id="pass" type="password" placeholder="Senha"><br><br>
+<button onclick="login()">Entrar</button>
+</div>
+</div>
+
+<script>
+const USER="admin",PASS="isacsantos2828";
+
+// ====== VISITANTES ONLINE SIMPLES ======
+if(!localStorage.getItem("onlineUsers")) localStorage.setItem("onlineUsers","0");
+if(!sessionStorage.getItem("visited")){
+  sessionStorage.setItem("visited","true");
+  localStorage.setItem("onlineUsers",parseInt(localStorage.getItem("onlineUsers"))+1);
+}
+function updateVisitors(){ visitors.textContent = localStorage.getItem("onlineUsers"); }
+updateVisitors();
+window.addEventListener("beforeunload", ()=>{
+  if(sessionStorage.getItem("visited")){
+    localStorage.setItem("onlineUsers",parseInt(localStorage.getItem("onlineUsers"))-1);
+    sessionStorage.removeItem("visited");
+  }
+});
+
+// ====== PRODUTOS COM LOCALSTORAGE ======
+let products = [];
+
+function loadProducts(){
+  const data = localStorage.getItem("products");
+  if(data) products = JSON.parse(data);
+  else {
+    // produtos iniciais
+    products=[
+      {name:"Free Fire MOD PRO",img:"https://i.imgur.com/Z8aZQZb.png",desc:"🔥 MOD Premium com Aimbot, ESP, Anti-ban e muito mais!",old:99.90,price:39.90,stock:10,maint:false,link:"https://seulink.com",type:"download"},
+      {name:"GTA SAMP HACK VIP",img:"https://i.imgur.com/Z8aZQZb.png",desc:"🚗 Hack completo com Wallhack, Speed, Godmode, Teleport!",old:129.90,price:49.90,stock:5,maint:false,link:"https://seulink.com",type:"buy"},
+      {name:"Rio Rise MOD ULTRA",img:"https://i.imgur.com/Z8aZQZb.png",desc:"⚠ Produto em manutenção",old:119.90,price:44.90,stock:0,maint:true,link:"https://seulink.com",type:"download"}
+    ];
+    saveProducts();
+  }
+}
+
+function saveProducts(){
+  localStorage.setItem("products",JSON.stringify(products));
+}
+
+// ====== RENDER PRODUTOS ======
+const productsBox=document.getElementById("products");
+const list=document.getElementById("list");
+
+function renderProducts(arr=products){
+productsBox.innerHTML="";
+arr.forEach((p,i)=>{
+productsBox.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+${p.maint?'<div class="maint">⚠ Em manutenção</div>':''}
+<div class="stock">Estoque: ${p.stock}</div>
+<div class="price"><del>R$ ${p.old.toFixed(2)}</del><br><span>R$ ${p.price.toFixed(2)}</span></div><br>
+
+<button onclick="showDetails(${i})">👁 Ver Detalhes</button><br><br>
+
+${p.type=="download"
+?`<button onclick="download('${p.link}')">⬇ Download</button>`
+:`<button onclick="add(${i})" ${p.stock<=0||p.maint?'disabled':''}>🛒 Comprar</button>`}
+
+</div>`;
+});
+updateSelect();
+}
+
+function showDetails(i){
+let p=products[i];
+mImg.src=p.img;
+mName.textContent=p.name;
+mPrice.textContent="R$ "+p.price.toFixed(2);
+mStock.textContent="Estoque: "+p.stock;
+mMaint.textContent=p.maint?"⚠ Em manutenção":"Disponível";
+mDesc.textContent=p.desc;
+modal.style.display="flex";
+}
+
+function updateSelect(){
+prodSelect.innerHTML="";
+products.forEach((p,i)=>{
+prodSelect.innerHTML+=`<option value="${i}">${p.name}</option>`;
+});
+}
+
+search.addEventListener("input",()=>{
+let v=search.value.toLowerCase();
+renderProducts(products.filter(p=>p.name.toLowerCase().includes(v)));
+});
+
+function download(link){window.open(link,"_blank");}
+
+let cart=[],total=0,discount=10;
+
+function add(i){
+let p=products[i];
+if(p.stock<=0||p.maint)return alert("Produto indisponível");
+p.stock--;
+cart.push(p);
+saveProducts();
+renderCart();
+renderProducts();
+}
+
+function renderCart(){
+list.innerHTML="";
+total=0;
+cart.forEach((p)=>{
+total+=p.price;
+list.innerHTML+=`<li>${p.name}<span>R$ ${p.price.toFixed(2)}</span></li>`;
+});
+calc();
+}
+
+function calc(){
+let d=discount;
+if(cupom.value.toUpperCase()=="GALAXIA") d=25;
+sub.textContent=total.toFixed(2);
+disc.textContent=d+"%";
+totalSpan.textContent=(total*(100-d)/100).toFixed(2);
+}
+
+const totalSpan=document.getElementById("total");
+
+function pix(){
+if(total<=0)return alert("Carrinho vazio");
+if(email.value=="")return alert("Digite seu e-mail");
+alert(`PIX GERADO\nValor: R$ ${totalSpan.textContent}\nChave: loja@isacmods.com`);
+}
+
+function toggleCart(){cartBox.style.display=cartBox.style.display=="none"?"block":"none";}
+function openLogin(){loginBox.style.display="flex";}
+function login(){if(user.value===USER && pass.value===PASS){adminPanel.style.display="block";loginBox.style.display="none"}else alert("Login inválido");}
+function logout(){adminPanel.style.display="none";}
+
+// ====== ADMIN COM GALERIA ======
+function addAdminProduct(){
+  const file = document.getElementById("pImgFile").files[0];
+  if(!file) return alert("Escolha uma imagem!");
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    products.push({
+      name:pName.value || "Produto sem nome",
+      img:e.target.result,
+      desc:pDesc.value || "Sem descrição",
+      old:parseFloat(pOld.value) || 0,
+      price:parseFloat(pPrice.value) || 0,
+      stock:parseInt(pStock.value) || 0,
+      maint:false,
+      link:pLink.value || "#",
+      type:pType.value
+    });
+    saveProducts();
+    renderProducts();
+
+    // Limpa campos
+    pName.value=""; pDesc.value=""; pOld.value=""; pPrice.value=""; pStock.value=""; pLink.value=""; pImgFile.value="";
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleMaint(){let i=prodSelect.value;products[i].maint=!products[i].maint;saveProducts();renderProducts();}
+function deleteProduct(){let i=prodSelect.value;products.splice(i,1);saveProducts();renderProducts();}
+
+// ====== TIMER ======
+let end=new Date().getTime()+1000*60*60*12;
+setInterval(()=>{
+let d=end-new Date().getTime();
+if(d<0)return;
+let h=Math.floor(d/1000/60/60);
+let m=Math.floor(d/1000/60)%60;
+let s=Math.floor(d/1000)%60;
+timer.textContent=`${h}h ${m}m ${s}s`;
+},1000);
+
+// ====== INICIALIZAÇÃO ======
+loadProducts();
+renderProducts();
+updateVisitors();
+</script>
+
+</body>
+</html>
