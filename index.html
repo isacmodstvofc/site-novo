@@ -41,16 +41,63 @@ button{background:linear-gradient(135deg,#38bdf8,#22c55e);border:none;padding:10
 footer{border-top:2px solid #38bdf8;padding:15px;text-align:center;margin-top:30px}
 footer a{color:#38bdf8;margin:0 10px;text-decoration:none;font-weight:700}
 .visitors{font-size:14px;color:#38bdf8;margin-top:10px;text-align:center}
+.visitors{font-size:14px;color:#38bdf8;margin-top:10px;text-align:center}
+
+/* ===== BOTÃO FLUTUANTE ===== */
+
+.toolsBtn{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#38bdf8,#22c55e);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  cursor:pointer;
+  box-shadow:0 0 20px rgba(56,189,248,.8);
+  z-index:999;
+  transition:.3s;
+}
+
+.toolsBtn:hover{
+  transform:rotate(90deg) scale(1.1);
+}
+
+.toolsMenu{
+  position:fixed;
+  bottom:90px;
+  left:20px;
+  background:#020617;
+  border:2px solid #38bdf8;
+  border-radius:15px;
+  padding:12px;
+  display:none;
+  flex-direction:column;
+  gap:10px;
+  z-index:999;
+}
+
 </style>
 </head>
 
 <body>
 
+<div class="toolsBtn" onclick="toggleTools()">⚙</div>
+
+<div class="toolsMenu" id="toolsMenu">
+  <button onclick="openLogin()">🛠 Admin</button>
+  <button onclick="openScript()">📜 Script</button>
+</div>
+
 <header>
 <h1>🌌 Isac Mods TV — Galaxy Store</h1>
 <div class="search"><input id="search" placeholder="Buscar produto..."></div>
 <button onclick="toggleCart()">🛒 Carrinho</button>
-<button onclick="openLogin()">🔐 Admin</button>
+
 </header>
 
 <div class="music">
@@ -326,6 +373,17 @@ let m=Math.floor(d/1000/60)%60;
 let s=Math.floor(d/1000)%60;
 timer.textContent=`${h}h ${m}m ${s}s`;
 },1000);
+
+// ====== MENU FERRAMENTAS ======
+function toggleTools(){
+  const menu = document.getElementById("toolsMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+function openScript(){
+  window.open("https://SEU-SITE-AQUI.com","_blank");
+}
+
 
 // ====== INICIALIZAÇÃO ======
 loadProducts();
